@@ -1,6 +1,12 @@
 (require 'chatu-common)
 (require 'f)
 
+(defun chatu-xournal--find-executable ()
+  "Find the xournal executable on PATH, or else return an error."
+  (condition-case nil
+      (file-truename (executable-find "xournalpp"))
+    (wrong-type-argument
+     (message "Cannot find the xournalpp executable on the PATH."))))
 (defcustom chatu-xournal-executable-func #'chatu-xournal--find-executable
   "The function to find the xournal executable."
   :group 'chatu
@@ -8,13 +14,6 @@
 
 (defvar xournal-path (shell-quote-argument (funcall chatu-xournal-executable-func)))
 (defvar chatu-xournal-template-path nil "Content of empty xournal file.")
-
-(defun chatu-xournal--find-executable ()
-  "Find the xournal executable on PATH, or else return an error."
-  (condition-case nil
-      (file-truename (executable-find "xournalpp"))
-    (wrong-type-argument
-     (message "Cannot find the xournalpp executable on the PATH."))))
 
 (defun chatu-xournal-script (keyword-plist)
   "Get conversion script.
