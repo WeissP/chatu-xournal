@@ -1,1 +1,1 @@
-The Xournal++ support of [https://github.com/kimim/chatu/tree/main](chatu).
+The Xournal++ support of [chatu](https://github.com/kimim/chatu/tree/main).
