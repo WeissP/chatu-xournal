@@ -21,7 +21,9 @@ KEYWORD-PLIST contains parameters from the chatu line."
   (let* ((input-path
           (f-expand (chatu-common-with-extension
                      (plist-get keyword-plist :input-path) "xopp")))
-         (output-path (f-expand (plist-get keyword-plist :output-path)))
+         (output-dir (f-dirname (f-expand (plist-get keyword-plist :output-path))))
+         (name (f-filename (plist-get keyword-plist :input-path)))
+         (output-path (f-swap-ext (f-join output-dir name) "png"))
          )
     (chatu-xournal-ensure-file input-path)    
     (format "%s %s -i %s"
