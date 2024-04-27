@@ -21,15 +21,21 @@ KEYWORD-PLIST contains parameters from the chatu line."
   (let* ((input-path
           (f-expand (chatu-common-with-extension
                      (plist-get keyword-plist :input-path) "xopp")))
-         (output-dir (f-dirname (f-expand (plist-get keyword-plist :output-path))))
-         (name (f-filename (plist-get keyword-plist :input-path)))
-         (output-path (f-swap-ext (f-join output-dir name) "png"))
+         (image-output-path (f-expand (plist-get keyword-plist :output-path)))
+         (page (plist-get keyword-plist :page))
+         (output-dir (f-dirname image-output-path))
+         (output-ext (or (plist-get keyword-plist :out-ext) "png"))
+         (tmp "tmp")
+         (tmp-in (f-join output-dir (format "%s.%s" tmp output-ext)))
+         (tmp-out (f-join output-dir (format "%s-%s.%s" tmp page output-ext) ))
          )
     (chatu-xournal-ensure-file input-path)    
-    (format "%s %s -i %s"
+    (format "%s %s -i %s && convert -strip -colors 64 -scale 20%% -alpha background -type optimize %s %s"
             xournal-path
             (shell-quote-argument input-path)
-            (shell-quote-argument output-path)
+            (shell-quote-argument tmp-in)
+            (shell-quote-argument tmp-out)
+            (shell-quote-argument image-output-path)
             )
     ))
 
@@ -46,7 +52,7 @@ KEYWORD-PLIST contains parameters from the chatu line."
 KEYWORD-PLIST contains parameters from the chatu line."
   (interactive)
   (let* ((path (plist-get keyword-plist :input-path))
-         (path (chatu-common-with-extension path "xopp"))
+         (path (f-expand (chatu-common-with-extension path "xopp")))
          (page (or (plist-get keyword-plist :page) 1)))
     (chatu-xournal-ensure-file path)    
     (cond
