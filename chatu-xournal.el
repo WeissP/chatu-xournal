@@ -34,7 +34,7 @@ KEYWORD-PLIST contains parameters from the chatu line."
          (tmp-out (f-join output-dir (format "%s-%s.%s" tmp page output-ext) ))
          )
     (chatu-xournal-ensure-file input-path)    
-    (format "%s %s -i %s && convert -strip -colors 64 -scale 20%% -alpha background -type optimize %s %s"
+    (format "%s %s -i %s && convert -trim -strip -colors 64 -scale 20%% -alpha background -type optimize %s %s"
             xournal-path
             (shell-quote-argument input-path)
             (shell-quote-argument tmp-in)
