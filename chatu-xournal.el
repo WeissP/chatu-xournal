@@ -3,10 +3,14 @@
 
 (defun chatu-xournal--find-executable ()
   "Find the xournal executable on PATH, or else return an error."
-  (condition-case nil
-      (file-truename (executable-find "xournalpp"))
-    (wrong-type-argument
-     (message "Cannot find the xournalpp executable on the PATH."))))
+  (cond
+   ((eq system-type 'darwin)
+    "/Applications/Xournal++.app/Contents/MacOS/xournalpp")
+   (t (condition-case nil
+          (file-truename (executable-find "xournalpp"))
+        (wrong-type-argument
+         (message "Cannot find the xournalpp executable on the PATH.")))))
+  )
 (defcustom chatu-xournal-executable-func #'chatu-xournal--find-executable
   "The function to find the xournal executable."
   :group 'chatu
@@ -57,10 +61,11 @@ KEYWORD-PLIST contains parameters from the chatu line."
     (chatu-xournal-ensure-file path)    
     (cond
      ((eq system-type 'darwin)
-      (start-process "" nil "open" "-a" "xournalpp" path "-n" page))
+      (start-process "" nil "open" "-a" xournal-path path "-n" page))
      (t (start-process "" nil xournal-path path "-n" page)))
     ))
 
 (provide 'chatu-xournal)
+
 
 
