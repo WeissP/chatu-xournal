@@ -15,6 +15,10 @@
   "The function to find the xournal executable."
   :group 'chatu
   :type 'function)
+(defcustom chatu-xournal-compress-rate 35
+  "compress rate passed to magick"
+  :group 'chatu
+  :type 'natnum)
 
 (defvar xournal-path (shell-quote-argument (funcall chatu-xournal-executable-func)))
 (defvar chatu-xournal-template-path nil "Content of empty xournal file.")
@@ -34,10 +38,11 @@ KEYWORD-PLIST contains parameters from the chatu line."
          (tmp-out (f-join output-dir (format "%s-%s.%s" tmp page output-ext) ))
          )
     (chatu-xournal-ensure-file input-path)    
-    (format "%s %s -i %s && convert -trim -strip -colors 64 -scale 20%% -alpha background -type optimize %s %s"
+    (format "%s %s -i %s && magick convert -trim -strip -colors 64 -scale %d%% -alpha background -type optimize %s %s"
             xournal-path
             (shell-quote-argument input-path)
             (shell-quote-argument tmp-in)
+            chatu-xournal-compress-rate
             (shell-quote-argument tmp-out)
             (shell-quote-argument image-output-path)
             )
@@ -61,11 +66,9 @@ KEYWORD-PLIST contains parameters from the chatu line."
     (chatu-xournal-ensure-file path)    
     (cond
      ((eq system-type 'darwin)
-      (start-process "" nil "open" "-a" xournal-path path "-n" page))
+      (start-process "" nil xournal-path path "-n" page)
+      )
      (t (start-process "" nil xournal-path path "-n" page)))
     ))
 
 (provide 'chatu-xournal)
-
-
-
